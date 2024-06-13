@@ -13,7 +13,7 @@
 double Setpoint, Input, Output;
 
 //Define the aggressive and conservative Tuning Parameters
-double consKp=1, consKi=0.05, consKd=0.25;
+double consKp=10, consKi=0.05, consKd=0.25;
 
 //Specify the links and initial tuning parameters
 PID myPID(&Input, &Output, &Setpoint, consKp, consKi, consKd, DIRECT);
@@ -21,8 +21,11 @@ PID myPID(&Input, &Output, &Setpoint, consKp, consKi, consKd, DIRECT);
 //MPU6050 mpu6050(Wire, 0x68);
 MPU6050 mpu(Wire);
 
+int angles[3] = {90,-90,0};
+int angleIndex = 0;
 
 unsigned long timer = 0;
+unsigned long timer2 = 0;
 
 void mpuSetup() {
   
@@ -110,5 +113,10 @@ void loop() {
     timer = millis();
   }
 
+  if (millis() - timer2 > 2000) {
+    Setpoint = angles[angleIndex];
+    angleIndex = (angleIndex + 1) % 3;
+    timer2 = millis();
+  }
 }
 
